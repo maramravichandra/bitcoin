@@ -98,7 +98,7 @@ object BitcoinUtils {
     val numDays = NumberUtils.toInt(numDaysTmp)
     val bitcoinDataDes = new BitcoinData()
 
-    if( numDays < 0 ){
+    if( numDays <= 0 ){
       bitcoinDataDes.errorMessage = "Please give correct number of days to get Bitcoin trading Decision"
     }else if(numDays < 2){
       bitcoinDataDes.errorMessage = "Please give number of days > 1"
@@ -120,6 +120,35 @@ object BitcoinUtils {
 
     bitcoinDataDes
   }
+
+  def getMaxPriceInEachBucket( bitcoinDataExisted: BitcoinData, startDate:String,endDate:String,bucketSize:Int): BitcoinData ={
+
+    val bitcoinData = new BitcoinData
+
+    if( bucketSize <= 0 ){
+      bitcoinData.errorMessage = "Bucket size must be greater then 0"
+    }
+    else{
+
+      try{
+        val stDt = df.parse(startDate).getTime
+        val endDt = df.parse(endDate).getTime
+
+        val filteredPrices = bitcoinDataExisted.data.prices.filter( price => stDt <= price.timestamp && price.timestamp < endDt)
+        val bucketedData = filteredPrices.grouped(bucketSize).map( _.maxBy( _.price))
+        bitcoinData.data.prices = bucketedData.toArray
+
+      }catch{
+        case exp:Exception =>
+          bitcoinData.errorMessage = s"Start Date/ End Date format is incorrect. Please make format is $DATE_FORMAT"
+      }
+
+    }
+
+    bitcoinData
+  }
+
+
 
   private def getUpAndDownOfBitcoin( bitcoinData:BitcoinData, avgPrice:Float ):(Int,Int)={
 

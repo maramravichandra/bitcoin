@@ -121,15 +121,13 @@ object BitcoinUtils {
     bitcoinDataDes
   }
 
-  def getMaxPriceInEachBucket( bitcoinDataExisted: BitcoinData, startDate:String,endDate:String,bucketSize:Int): BitcoinData ={
+  def getMaxPriceInEachBucket( bitcoinDataExisted: BitcoinData, startDate:String,endDate:String,bucketSize:Int) = {
 
     val bitcoinData = new BitcoinData
 
     if( bucketSize <= 0 ){
       bitcoinData.errorMessage = "Bucket size must be greater then 0"
-    }
-    else{
-
+    }else{
       try{
         val stDt = df.parse(startDate).getTime
         val endDt = df.parse(endDate).getTime
@@ -140,7 +138,7 @@ object BitcoinUtils {
 
       }catch{
         case exp:Exception =>
-          bitcoinData.errorMessage = s"Start Date/ End Date format is incorrect. Please make format is $DATE_FORMAT"
+          bitcoinData.errorMessage = s"Start Date/ End Date format is incorrect. Please make sure format is '$DATE_FORMAT'"
       }
 
     }

@@ -23,5 +23,10 @@ class BitcoinServlet(bitcoinService:BitcoinService) extends ScalatraServlet  {
     BitcoinUtils.getJSON(result)
   }
 
+  get("/getmaxpriceinbucket/:startDt/:endDt/:bucketSize") {
+    val result = bitcoinService.getMaxPriceInEachBucket(params("startDt"),params("endDt"),params("bucketSize").toInt)
+    BitcoinUtils.getJSON(result)
+  }
+
 
 }

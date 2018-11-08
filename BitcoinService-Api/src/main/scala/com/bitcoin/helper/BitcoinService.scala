@@ -35,4 +35,13 @@ trait BitcoinService {
     */
   def getTradingDecision(numDays:String):BitcoinData
 
+  /**
+    *
+    * @param startDate
+    * @param endDate
+    * @param bucketSize
+    * @return
+    */
+  def getMaxPriceInEachBucket(startDate:String,endDate:String,bucketSize:Int):BitcoinData
+
 }

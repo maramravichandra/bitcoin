@@ -135,7 +135,7 @@ object BitcoinUtils {
         val endDt = df.parse(endDate).getTime
 
         val filteredPrices = bitcoinDataExisted.data.prices.filter( price => stDt <= price.timestamp && price.timestamp < endDt)
-        val bucketedData = filteredPrices.grouped(bucketSize).map( _.maxBy( _.price))
+        val bucketedData = filteredPrices.grouped(bucketSize).map(_.maxBy( x => x.price.toFloat))
         bitcoinData.data.prices = bucketedData.toArray
 
       }catch{

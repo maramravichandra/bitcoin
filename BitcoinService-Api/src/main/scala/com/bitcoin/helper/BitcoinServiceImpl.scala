@@ -19,4 +19,7 @@ class BitcoinServiceImpl extends BitcoinService {
     BitcoinUtils.getBitcoinTradingDecision(bitcoinData,numDays)
   }
 
+  override def getMaxPriceInEachBucket(startDate: String, endDate: String, bucketSize: Int): BitcoinData = {
+    BitcoinUtils.getMaxPriceInEachBucket(bitcoinData,startDate,endDate,bucketSize)
+  }
 }

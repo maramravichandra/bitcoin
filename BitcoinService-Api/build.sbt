@@ -1,8 +1,8 @@
 val ScalatraVersion = "2.6.3"
 
-organization := "infosys"
+organization := "Toolkitaki"
 
-name := "MyScalatraWebApp"
+name := "Bitcoin-Api"
 
 version := "0.1.0-SNAPSHOT"
 

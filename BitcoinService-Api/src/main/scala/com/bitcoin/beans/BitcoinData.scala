@@ -33,5 +33,5 @@ class BitcoinData{
 
 case class Data(base:String,currency:String, var prices:Array[Price])
 case class Price(price:String,time:String, @transient var timestamp:Long,
-                 @transient var  date:Date,@transient var  week:Int,
-                 @transient var  month:Int,@transient var  year:Int)
+                 @transient var  date:Date = null,@transient var  week:Int = 0,
+                 @transient var  month:Int = 0,@transient var  year:Int = 0)

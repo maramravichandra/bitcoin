@@ -8,6 +8,7 @@ import org.scalatest.FunSuite
 
 class MyScalatraServletTests extends FunSuite {
 
+  // To Test Maxprice in BitCoin data in each bucket/chunk
    test("Test MaxPrice in Bitcoins Data") {
 
     val bitcoin = new BitcoinData

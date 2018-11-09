@@ -5,21 +5,19 @@ import com.bitcoin.util.BitcoinUtils
 
 class BitcoinServiceImpl extends BitcoinService {
 
-  val bitcoinData = BitcoinUtils.getBitcoinData()
-
   override def getProceMovement(date: String): BitcoinData = {
-    BitcoinUtils.getBitcoinPrices(bitcoinData,date)
+    BitcoinUtils.getBitcoinPrices(BitcoinUtils.getBitcoinData,date)
   }
 
   override def getAveragePrice(fromDate: String, toDate: String): BitcoinData = {
-    BitcoinUtils.getBitcoinAveragePrice(bitcoinData,fromDate,toDate)
+    BitcoinUtils.getBitcoinAveragePrice(BitcoinUtils.getBitcoinData,fromDate,toDate)
   }
 
   override def getTradingDecision(numDays: String): BitcoinData = {
-    BitcoinUtils.getBitcoinTradingDecision(bitcoinData,numDays)
+    BitcoinUtils.getBitcoinTradingDecision(BitcoinUtils.getBitcoinData,numDays)
   }
 
   override def getMaxPriceInEachBucket(startDate: String, endDate: String, bucketSize: Int): BitcoinData = {
-    BitcoinUtils.getMaxPriceInEachBucket(bitcoinData,startDate,endDate,bucketSize)
+    BitcoinUtils.getMaxPriceInEachBucket(BitcoinUtils.getBitcoinData,startDate,endDate,bucketSize)
   }
 }

@@ -16,28 +16,21 @@ object BitcoinUtils {
   val WEEK  = "WEEK"
   val MONTH = "MONTH"
   val YEAR  = "YEAR"
-  var DATE_FORMAT = "yyyy-MM-dd";
+  var DATE_FORMAT = "yyyy-MM-dd"
   val df = new SimpleDateFormat(BitcoinUtils.DATE_FORMAT)
-  private var bitcoinResult:Option[BitcoinData] = None
 
-
-  def getBitcoinData():BitcoinData= {
-
-    if (!bitcoinResult.isDefined) {
-      val url = "https://www.coinbase.com/api/v2/prices/BTC-USD/historic?period=all"
-      val json = Source.fromURL(url).mkString
-      val gson = new Gson();
-      val bitcoinData = gson.fromJson(s"""$json""".stripMargin, classOf[BitcoinData]);
-      bitcoinData.updatePriceFields()
-      println("bitcoinData", bitcoinData.data.prices.length)
-      bitcoinResult = Some(bitcoinData)
-    }
-
-    bitcoinResult.get
+  def getBitcoinData:BitcoinData = {
+    val url = "https://www.coinbase.com/api/v2/prices/BTC-USD/historic?period=all"
+    val json = Source.fromURL(url).mkString
+    val gson = new Gson()
+    val bitcoinData = gson.fromJson(s"""$json""".stripMargin, classOf[BitcoinData])
+    bitcoinData.updatePriceFields()
+    println("bitcoinData", bitcoinData.data.prices.length)
+    bitcoinData
   }
 
 
-  def getBitcoinPrices(bitcoinData:BitcoinData,priceTime:String) ={
+  def getBitcoinPrices(bitcoinData:BitcoinData,priceTime:String):BitcoinData={
 
     val priceTmp = bitcoinData.data.prices(bitcoinData.data.prices.length - 1)
     println( "priceTmp",priceTmp.toString)
@@ -62,7 +55,7 @@ object BitcoinUtils {
       case _ =>
         try{
 
-          val inputDate = df.parse(priceTime);
+          val inputDate = df.parse(priceTime)
           bitcoinDataTmp.data = Data(bitcoinData.data.base, bitcoinData.data.currency,
             bitcoinData.data.prices.filter( price => price.timestamp == inputDate.getTime))
           bitcoinDataTmp
@@ -74,7 +67,7 @@ object BitcoinUtils {
     }
   }
 
-  def getBitcoinAveragePrice( bitcoinData:BitcoinData, fromDate:String,toDate:String ) ={
+  def getBitcoinAveragePrice( bitcoinData:BitcoinData, fromDate:String,toDate:String ):BitcoinData={
 
     val bitcoinAverage = new BitcoinData()
     try{
@@ -83,7 +76,7 @@ object BitcoinUtils {
       val prices = bitcoinData.data.prices.filter( price => fromDt <= price.timestamp && price.timestamp < toDt)
       val price = prices.map( _.price.toFloat)
 
-      bitcoinAverage.avgPrice = (price.sum/price.length).toFloat
+      bitcoinAverage.avgPrice = price.sum/price.length
       bitcoinAverage.data = Data(bitcoinData.data.base,bitcoinData.data.currency,prices)
       bitcoinAverage
     }catch{
@@ -93,7 +86,7 @@ object BitcoinUtils {
     }
   }
 
-  def getBitcoinTradingDecision( bitcoinData:BitcoinData, numDaysTmp:String ) ={
+  def getBitcoinTradingDecision( bitcoinData:BitcoinData, numDaysTmp:String ):BitcoinData={
 
     val numDays = NumberUtils.toInt(numDaysTmp)
     val bitcoinDataDes = new BitcoinData()
@@ -107,9 +100,9 @@ object BitcoinUtils {
       val prices = lastXDaysPrices.map( _.price.toFloat)
       val minPrice = prices.min
       val maxPrice = prices.max
-      val avgPrice = prices.sum.toFloat/prices.length
+      val avgPrice = prices.sum/prices.length
 
-      val latestPrice = if( bitcoinData.data.prices.length > 0 ) bitcoinData.data.prices(0) else Price("0","",0,new Date(),0,0,0)
+      val latestPrice = if( bitcoinData.data.prices.length > 0 ) bitcoinData.data.prices(0) else Price("0","",0,new Date())
       val decision = if( latestPrice.price.toFloat < avgPrice ) "BUY"
       else if( latestPrice.price.toFloat > avgPrice && latestPrice.price.toFloat < maxPrice ) "HOLD"
       else if( latestPrice.price.toFloat > avgPrice && latestPrice.price.toFloat == maxPrice ) "SELL"
@@ -121,7 +114,7 @@ object BitcoinUtils {
     bitcoinDataDes
   }
 
-  def getMaxPriceInEachBucket( bitcoinDataExisted: BitcoinData, startDate:String,endDate:String,bucketSize:Int) = {
+  def getMaxPriceInEachBucket( bitcoinDataExisted: BitcoinData, startDate:String,endDate:String,bucketSize:Int):BitcoinData= {
 
     val bitcoinData = new BitcoinData
 
@@ -133,7 +126,7 @@ object BitcoinUtils {
         val endDt = df.parse(endDate).getTime
 
         val filteredPrices = bitcoinDataExisted.data.prices.filter( price => stDt <= price.timestamp && price.timestamp < endDt)
-        val bucketedData = filteredPrices.grouped(bucketSize).map(_.maxBy( x => x.price.toFloat))
+        val bucketedData = filteredPrices.sortBy(_.timestamp).grouped(bucketSize).map(_.maxBy( x => x.price.toFloat))
         bitcoinData.data.prices = bucketedData.toArray
 
       }catch{
@@ -150,8 +143,8 @@ object BitcoinUtils {
 
   private def getUpAndDownOfBitcoin( bitcoinData:BitcoinData, avgPrice:Float ):(Int,Int)={
 
-    val downs = bitcoinData.data.prices.filter( _.price.toFloat < avgPrice ).length
-    val ups   = bitcoinData.data.prices.filter( _.price.toFloat >= avgPrice ).length
+    val downs = bitcoinData.data.prices.count( _.price.toFloat < avgPrice )
+    val ups   = bitcoinData.data.prices.count( _.price.toFloat >= avgPrice )
     (downs,ups)
   }
 

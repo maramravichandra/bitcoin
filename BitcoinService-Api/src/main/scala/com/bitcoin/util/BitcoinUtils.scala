@@ -4,10 +4,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import com.bitcoin.beans.{BitcoinData, Data, Price}
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.google.gson.Gson
 import org.apache.commons.lang3.math.NumberUtils
-import org.json.JSONObject
 
 import scala.io.Source
 
@@ -29,8 +27,7 @@ object BitcoinUtils {
     bitcoinData
   }
 
-
-  def getBitcoinPrices(bitcoinData:BitcoinData,priceTime:String):BitcoinData={
+  def getBitcoinPrices(bitcoinData:BitcoinData,priceTime:String): BitcoinData ={
 
     val priceTmp = bitcoinData.data.prices(bitcoinData.data.prices.length - 1)
     println( "priceTmp",priceTmp.toString)
